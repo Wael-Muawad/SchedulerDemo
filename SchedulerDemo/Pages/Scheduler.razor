@@ -1,35 +1,61 @@
 ﻿@page "/scheduler"
+@using Syncfusion.Blazor.Notifications
 
 
 <PageTitle>Scheduler</PageTitle>
 <h3>Scheduler</h3>
 
-@if(DataSource is null)
+@if (DataSource is null)
 {
-    <span>GG</span>
+    <span>gg</span>
 }
 else
 {
+    <div class="col-lg-12 control-section toast-default-section">
+        <SfToast ID="toast_default" @ref="ToastObj" Title="Adaptive Tiles Meeting" Content="@ToastContent" Timeout="5000" Icon="e-meeting">
+            <ToastPosition X="@ToastPosition"></ToastPosition>
+        </SfToast>
+        <div class="col-lg-12 col-sm-12 col-md-12 center">
+            <div id="toastBtnDefault" style="margin: auto;text-align: center">
+                <button class="e-btn" @onclick="@ShowOnClick">Show Toasts</button>
+                <button class="e-btn" @onclick="@HideOnClick">Hide All</button>
+            </div>
+        </div>
+    </div>
 
-    @* <SfSchedule TValue="@AppointmentData" Height="650px" @bind-SelectedDate="@CurrentDate">
+
+    <SfSchedule TValue="@AppointmentData" Height="650px" @bind-SelectedDate="@CurrentDate" CurrentView="CurrentView">
         <ScheduleEventSettings DataSource="@DataSource"></ScheduleEventSettings>
-        <ScheduleViews>
+        <ScheduleViews @onclick="HandleClick">
             <ScheduleView Option="View.Day"></ScheduleView>
+            <ScheduleView Option="View.Week" StartHour="07:00" EndHour="11:00"></ScheduleView>
             <ScheduleView Option="View.Week"></ScheduleView>
-            <ScheduleView Option="View.WorkWeek"></ScheduleView>
-            <ScheduleView Option="View.Month"></ScheduleView>
+            <ScheduleView Option="View.WorkWeek" StartHour="10:00" EndHour="18:00"></ScheduleView>
+            <ScheduleView Option="View.Month" MaxEventsPerRow="2" ShowWeekend="false"></ScheduleView>
             <ScheduleView Option="View.Agenda"></ScheduleView>
         </ScheduleViews>
-    </SfSchedule> *@
+    </SfSchedule>
 }
 
+
+<style>
+    #toast_default .e-meeting::before {
+        content: "\e705";
+        font-size: 17px;
+    }
+
+    .bootstrap4 #toast_default .e-meeting::before {
+        content: "\e763";
+        font-size: 20px;
+    }
+</style>
 
 @code {
     protected override void OnInitialized()
     {
-        var om = 1; 
+        var om = 1;
     }
-
+    View CurrentView = View.Month;
     DateTime CurrentDate = new DateTime(2020, 2, 14);
     List<AppointmentData> DataSource = new List<AppointmentData>
     {
@@ -48,5 +74,26 @@ else
         public string RecurrenceRule { get; set; }
         public string RecurrenceException { get; set; }
         public Nullable<int> RecurrenceID { get; set; }
+    }
+    private async Task HandleClick(MouseEventArgs e)
+    {
+        await Task.Delay(5);
+    }
+
+
+
+
+    //Toast
+    SfToast ToastObj;
+    private string ToastPosition = "Right";
+    private string ToastContent = "gg";
+
+    private async Task ShowOnClick()
+    {
+        await this.ToastObj.ShowAsync();
+    }
+    private async Task HideOnClick()
+    {
+        await this.ToastObj.HideAsync("All");
     }
 }
